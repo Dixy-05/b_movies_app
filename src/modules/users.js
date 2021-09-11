@@ -1,13 +1,31 @@
 import React from 'react';
 import { useState } from 'react';
-import { Form, Button, Container, Alert } from 'react-bootstrap';
+import { Form, Button, Container, Alert, Card } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  registerEmail,
+  registerPassword,
+  loginEmail,
+  loginPassword,
+  findUser,
+  deleteUser,
+} from '../actions/users_actions';
+import usersService from '../services/usersServices';
 
 const Users = (props) => {
-  const [show, setShow] = useState(false);
+  const users = useSelector((state) => state.users);
+  const dispatch = useDispatch();
 
-  const deleteUser = (e) => {
-    props.delete(e);
-    setShow(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [showFind, setShowFind] = useState(false);
+
+  const removeUser = () => {
+    props.delete();
+    setShowDelete(false);
+  };
+  const handleFind = () => {
+    users.findEmail && setShowFind(true);
+    props.findUser();
   };
 
   return (
@@ -15,27 +33,34 @@ const Users = (props) => {
       <Container>
         <Form id="Register-Form">
           <h1>Register User</h1>
-          <Form.Group className="mb-3" controlId="register-email">
+          <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
             <Form.Control
-              // id="register-email"
               type="email"
+              value={users.registerEmail}
               placeholder="Enter email"
+              onChange={(e) => dispatch(registerEmail(e.target.value))}
             />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="register-password">
+          <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              // id="register-password"
               type="password"
+              value={users.registerPassword}
               placeholder="Password"
+              onChange={(e) => dispatch(registerPassword(e.target.value))}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={props.register}>
+          <Button
+            variant="primary"
+            type="button"
+            onClick={usersService.createUser}
+            // onClick={props.register}
+          >
             Submit
           </Button>
         </Form>
@@ -44,62 +69,124 @@ const Users = (props) => {
       <Container>
         <Form id="Login-Form">
           <h1>Login User</h1>
-          <Form.Group className="mb-3" controlId="login-email">
+          <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" />
+            <Form.Control
+              value={users.loginEmail}
+              type="email"
+              placeholder="Enter email"
+              onChange={(e) => dispatch(loginEmail(e.target.value))}
+            />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="login-password">
+          <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control
+              value={users.loginPassword}
+              type="password"
+              placeholder="Password"
+              onChange={(e) => dispatch(loginPassword(e.target.value))}
+            />
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={props.login}>
+          <Button variant="primary" type="button" onClick={props.login}>
             Submit
           </Button>
         </Form>
       </Container>
       <hr />
       <Container>
-        <Form id="Delete-Form">
-          <h1>Delete User</h1>
-          <Form.Group className="mb-3" controlId="delete-email">
+        <Form id="Find-Form">
+          <h1>Find User</h1>
+          <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
             <Form.Control
               autoComplete="off"
               type="email"
               placeholder="Enter email"
+              onChange={(e) => dispatch(findUser(e.target.value))}
+              value={users.findEmail}
             />
             <Form.Text id="warning" className="text-muted"></Form.Text>
           </Form.Group>
-          <Alert show={show} variant="light">
+          <Button type="button" variant="primary" onClick={handleFind}>
+            Find
+          </Button>
+        </Form>
+        <Card
+          style={{
+            width: '30rem',
+            display: showFind ? 'block' : 'none',
+            marginTop: '1em',
+          }}
+        >
+          <Card.Body>
+            <Card.Title>User Data</Card.Title>
+            <Card.Subtitle className="mb-2 text-muted">
+              <b className="ms-3">{users.userInfo.email}</b>
+            </Card.Subtitle>
+            {/* <Card.Text> */}
+            <ul>
+              <li>
+                <b className="me-2">User id:</b>
+                {users.userInfo.id}
+              </li>
+              <li>
+                <b className="me-2">Creation date:</b>
+                {users.userInfo.created_at}
+              </li>
+            </ul>
+            {/* </Card.Text> */}
+          </Card.Body>
+        </Card>
+      </Container>
+
+      <hr />
+      <Container>
+        <Form id="Delete-Form">
+          <h1>Delete User</h1>
+          <Form.Group className="mb-3">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              autoComplete="off"
+              type="email"
+              placeholder="Enter email"
+              onChange={(e) => dispatch(deleteUser(e.target.value))}
+              value={users.deleteEmail}
+            />
+            <Form.Text id="warning" className="text-muted"></Form.Text>
+          </Form.Group>
+          <Alert show={showDelete} variant="light">
             <Alert.Heading>Are you sure you want to delete user?</Alert.Heading>
             <hr />
             <div className="d-flex justify-content-center">
               <Button
-                type="submit"
-                onClick={(e) => deleteUser(e)}
+                type="button"
+                onClick={removeUser}
                 variant="outline-danger"
               >
                 Yes
               </Button>
               <Button
                 className="ms-2"
-                onClick={() => setShow(false)}
+                onClick={() => setShowDelete(false)}
                 variant="outline-primary"
               >
                 No
               </Button>
             </div>
           </Alert>
-          <Button type="button" variant="danger" onClick={() => setShow(true)}>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={() => setShowDelete(true)}
+          >
             Delete
           </Button>
         </Form>
       </Container>
-      <Container></Container>
     </React.Fragment>
   );
 };

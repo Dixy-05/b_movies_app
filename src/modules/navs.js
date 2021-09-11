@@ -1,5 +1,6 @@
 import React from 'react';
 import Nav from 'react-bootstrap/nav';
+import { Link } from 'react-router-dom';
 
 const appTabs = () => {
   return (
@@ -13,22 +14,19 @@ const appTabs = () => {
         }}
       >
         <Nav.Item>
-          <Nav.Link
-            onClick={(e) => {
-              e.preventDefault();
-            }}
-            eventKey="users"
-            id="unique"
-            href="/home"
-          >
+          <Nav.Link as={Link} to="/" eventKey="users" id="unique" href="/home">
             Users
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="movies">Movies</Nav.Link>
+          <Nav.Link as={Link} to="/movies" eventKey="movies">
+            Movies
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="subscriptions">Subscriptions</Nav.Link>
+          <Nav.Link as={Link} to="/subscriptions" eventKey="subscriptions">
+            Subscriptions
+          </Nav.Link>
         </Nav.Item>
       </Nav>
     </React.Fragment>

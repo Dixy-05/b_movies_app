@@ -1,121 +1,160 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import AppNavbar from './modules/navbar';
 import AppNavs from './modules/navs';
 import Users from './modules/users';
+import { Switch, Route } from 'react-router-dom';
+import Movies from './modules/movies';
+import Subscriptions from './modules/subscriptions';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  registerEmail,
+  registerPassword,
+  loginEmail,
+  loginPassword,
+  findUser,
+  deleteUser,
+  userInfo,
+} from './actions/users_actions';
 
 function App() {
-  const handleRegister = () => {
-    const registerForm = document.querySelector('#Register-Form');
-    const email = registerForm['register-email'].value;
-    const password = registerForm['register-password'].value;
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      console.log('email:', email, 'password:', password);
-      fetch('http://localhost:8081/api/register', {
-        method: 'POST',
-        credentials: 'same-origin',
-        // withCredentials: true,
-        cache: 'no-cache',
-        mode: 'cors',
-        headers: {
-          'content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          console.log('the return', json);
-          json && alert(`User was succesfully registered`);
-        })
-        .catch((err) => console.log(err));
-    });
-    registerForm['register-email'].value = '';
-    registerForm['register-password'].value = '';
-  };
-  const handleLogin = () => {
-    const loginForm = document.querySelector('#Login-Form');
-    const email = loginForm['login-email'].value;
-    const password = loginForm['login-password'].value;
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      fetch('http://localhost:8081/api/login', {
-        method: 'POST',
-        headers: {
-          'content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        cache: 'no-cache',
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      })
-        .then(async (res) => res.json())
-        .then((json) => console.log(json))
-        .catch((err) => console.log(err));
-    });
-    loginForm['login-email'].value = '';
-    loginForm['login-password'].value = '';
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [userInfo, setUserInfo] = useState({});
+
+  const users = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
+  const handleRegister = async () => {
+    console.log(
+      'email:',
+      users.registerEmail,
+      'password:',
+      users.registerPassword
+    );
+    // try {
+    //   const addedUser = await fetch('http://localhost:8081/api/register', {
+    //     method: 'POST',
+    //     credentials: 'same-origin',
+    //     // withCredentials: true,
+    //     cache: 'no-cache',
+    //     mode: 'cors',
+    //     headers: {
+    //       'content-Type': 'application/json',
+    //       Accept: 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       email: users.registerEmail,
+    //       password: users.registerPassword,
+    //     }),
+    //   });
+
+    //   const resJson = await addedUser.json();
+    //   console.log(resJson);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    // dispatch(registerEmail(''));
+    // dispatch(registerPassword(''));
   };
 
-  const handleDelete = () => {
-    const deleteForm = document.querySelector('#Delete-Form');
-    const email = deleteForm['delete-email'].value;
-    console.log('EMAIL-INPUT:', email);
-    deleteForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (email) {
-        document.querySelector('#warning').innerHTML = '';
-        try {
-          const deleteUser = await fetch(
-            `http://localhost:8081/api/users/${email}`,
-            {
-              method: 'DELETE',
-              headers: {
-                'content-Type': 'application/json',
-                Accept: 'application/json',
-              },
-            }
-          );
-          const resJson = await deleteUser.json();
-          console.log(resJson);
-        } catch (err) {
-          console.log(err);
+  const handleLogin = async () => {
+    try {
+      const loggedUser = await fetch('http://localhost:8081/api/login', {
+        method: 'POST',
+        headers: {
+          'content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        cache: 'no-cache',
+        body: JSON.stringify({
+          email: users.loginEmail,
+          password: users.loginPassword,
+        }),
+      });
+      const resJson = await loggedUser.json();
+      console.log(resJson);
+      localStorage.setItem('t', resJson.token);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(loginEmail(''));
+    dispatch(loginPassword(''));
+  };
+
+  const handleDelete = async () => {
+    try {
+      const deletedUser = await fetch(
+        `http://localhost:8081/api/users/${
+          users.deleteEmail ? users.deleteEmail : 'no input'
+        }`,
+        {
+          method: 'DELETE',
+          headers: {
+            'content-Type': 'application/json',
+            Accept: 'application/json',
+          },
         }
-        deleteForm.reset();
-      } else {
-        document.querySelector('#warning').innerHTML =
-          'You must enter a valid email !!';
-        alert('You must enter e valid email !!');
+      );
+      const resJson = await deletedUser.json();
+      if (resJson.error) {
+        throw resJson.error;
       }
-    });
+      console.log(resJson);
+      alert(`User ${users.deleteEmail} was successfully deleted`);
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+    dispatch(deleteUser(''));
+  };
+
+  const handleFindUser = async () => {
+    try {
+      const findUser = await fetch(
+        `http://localhost:8081/api/users/${
+          users.findEmail ? users.findEmail : 'no input'
+        }`,
+        {
+          method: 'GET',
+          headers: {
+            'content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('t')} `,
+          },
+        }
+      );
+      const resJson = await findUser.json();
+      dispatch(userInfo(resJson.user));
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(findUser(''));
   };
   return (
     <React.Fragment>
       <AppNavbar />
       <div className="App">
         <AppNavs />
-        <Users
-          login={handleLogin}
-          register={handleRegister}
-          delete={handleDelete}
-        />
+        <Switch>
+          <Route exact path="/">
+            <Users
+              login={handleLogin}
+              register={handleRegister}
+              delete={handleDelete}
+              findUser={handleFindUser}
+              userInfo={userInfo}
+            />
+          </Route>
+          <Route path="/movies">
+            <Movies />
+          </Route>
+          <Route path="/subscriptions">
+            <Subscriptions />
+          </Route>
+        </Switch>
       </div>
-      {/* <div>
-        <form>
-          <label>
-            Choose date:<input type="date"></input>
-          </label>
-        </form>
-        <button onClick={doThis} id="date">
-          fetch
-        </button>
-      </div> */}
     </React.Fragment>
   );
 }
