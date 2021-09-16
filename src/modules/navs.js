@@ -14,7 +14,13 @@ const appTabs = () => {
         }}
       >
         <Nav.Item>
-          <Nav.Link as={Link} to="/" eventKey="users" id="unique" href="/home">
+          <Nav.Link
+            as={Link}
+            to="/users"
+            eventKey="users"
+            id="unique"
+            href="/home"
+          >
             Users
           </Nav.Link>
         </Nav.Item>

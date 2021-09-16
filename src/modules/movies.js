@@ -1,32 +1,35 @@
 import React from 'react';
 import { useState } from 'react';
+import { Form, Button, Container, Card, Row, Col } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Form,
-  Button,
-  Container,
-  Alert,
-  Card,
-  Row,
-  Col,
-} from 'react-bootstrap';
+  addMovie,
+  addGenre,
+  addYear,
+  addLength,
+} from '../actions/movies_actions';
+import movieService from '../services/moviesService';
 
 const Movies = (props) => {
-  const [showDelete, setShowDelete] = useState(false);
-  const [showFind, setShowFind] = useState(false);
+  const movies = useSelector((state) => state.movies);
+  const dispatch = useDispatch();
 
-  const deleteUser = () => {
-    props.delete();
-    setShowDelete(false);
-  };
-  const handleFind = () => {
-    props.findUser();
-    props.email && setShowFind(true);
+  const [newMovie, setNewMovie] = useState({
+    movieTitle: '',
+    movieGenre: '',
+    movieYear: '',
+    movieLength: '',
+  });
+
+  const handleAddMovie = () => {
+    movieService.addNewMovie();
+    console.log('redux State', movies);
   };
 
   return (
     <div>
       <Container>
-        <Form id="Register-Form">
+        <Form id="addMovie-Form">
           <h1>Add Movies</h1>
           <Row>
             <Col md>
@@ -34,9 +37,11 @@ const Movies = (props) => {
                 <Form.Label>Movie Title</Form.Label>
                 <Form.Control
                   type="text"
-                  value={props.name}
+                  value={movies.addMovie.movieTitle}
                   placeholder="Enter title"
-                  onChange={(e) => props.setEmail(e.target.value)}
+                  onChange={(e) =>
+                    dispatch(addMovie(e.target.value, 'movieTitle'))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -45,9 +50,11 @@ const Movies = (props) => {
                 <Form.Label>Movie Genre</Form.Label>
                 <Form.Control
                   type="text"
-                  value={props.name}
+                  value={movies.addMovie.movieGenre}
                   placeholder="Enter genre"
-                  onChange={(e) => props.setEmail(e.target.value)}
+                  onChange={(e) =>
+                    dispatch(addMovie(e.target.value, 'movieGenre'))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -59,9 +66,10 @@ const Movies = (props) => {
                 <Form.Label>Movie Year</Form.Label>
                 <Form.Control
                   type="number"
-                  value={props.name}
-                  placeholder="Enter year"
-                  onChange={(e) => props.setEmail(e.target.value)}
+                  value={movies.addMovie.movieYear}
+                  onChange={(e) =>
+                    dispatch(addMovie(e.target.value, 'movieYear'))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -70,15 +78,17 @@ const Movies = (props) => {
                 <Form.Label>Movie Length</Form.Label>
                 <Form.Control
                   type="text"
-                  value={props.name}
+                  value={movies.addMovie.movieLength}
                   placeholder="Enter time"
-                  onChange={(e) => props.setEmail(e.target.value)}
+                  onChange={(e) =>
+                    dispatch(addMovie(e.target.value, 'movieLength'))
+                  }
                 />
               </Form.Group>
             </Col>
           </Row>
 
-          <Button variant="primary" type="button" onClick={props.register}>
+          <Button variant="primary" type="button" onClick={handleAddMovie}>
             Add
           </Button>
         </Form>
@@ -86,7 +96,7 @@ const Movies = (props) => {
       <hr />
 
       <Container>
-        <Form id="Find-Form">
+        <Form id="FindMovie-Form">
           <h1>Find Movie</h1>
           <Form.Group className="mb-3">
             <Form.Label>Movie title</Form.Label>
@@ -94,19 +104,23 @@ const Movies = (props) => {
               autoComplete="off"
               type="text"
               placeholder="Enter movie title"
-              onChange={(e) => props.setEmail(e.target.value)}
+              // onChange={(e) => props.setEmail(e.target.value)}
               value={props.movie}
             />
             <Form.Text id="warning" className="text-muted"></Form.Text>
           </Form.Group>
-          <Button type="button" variant="primary" onClick={handleFind}>
+          <Button
+            type="button"
+            variant="primary"
+            // onClick={handleFind}
+          >
             Find
           </Button>
         </Form>
         <Card
           style={{
             width: '30rem',
-            display: showFind ? 'block' : 'none',
+            // display: showFind ? 'block' : 'none',
             marginTop: '1em',
           }}
         >

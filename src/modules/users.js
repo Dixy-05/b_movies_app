@@ -1,7 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import { Form, Button, Container, Alert, Card } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  Form,
+  Button,
+  Container,
+  Alert,
+  Card,
+  CloseButton,
+} from 'react-bootstrap';
 import {
   registerEmail,
   registerPassword,
@@ -10,6 +16,7 @@ import {
   findUser,
   deleteUser,
 } from '../actions/users_actions';
+import { useDispatch, useSelector } from 'react-redux';
 import usersService from '../services/usersServices';
 
 const Users = (props) => {
@@ -20,12 +27,19 @@ const Users = (props) => {
   const [showFind, setShowFind] = useState(false);
 
   const removeUser = () => {
-    props.delete();
+    usersService.deleteUser();
     setShowDelete(false);
   };
+  const deleteButton = () => {
+    if (users.deleteEmail) {
+      setShowDelete(true);
+    } else {
+      alert('Input fiel must have an Email to delete User');
+    }
+  };
   const handleFind = () => {
+    usersService.getUser();
     users.findEmail && setShowFind(true);
-    props.findUser();
   };
 
   return (
@@ -59,7 +73,6 @@ const Users = (props) => {
             variant="primary"
             type="button"
             onClick={usersService.createUser}
-            // onClick={props.register}
           >
             Submit
           </Button>
@@ -91,7 +104,11 @@ const Users = (props) => {
               onChange={(e) => dispatch(loginPassword(e.target.value))}
             />
           </Form.Group>
-          <Button variant="primary" type="button" onClick={props.login}>
+          <Button
+            variant="primary"
+            type="button"
+            onClick={usersService.loginUser}
+          >
             Submit
           </Button>
         </Form>
@@ -123,6 +140,10 @@ const Users = (props) => {
           }}
         >
           <Card.Body>
+            <p className="d-flex justify-content-end ">
+              {' '}
+              <CloseButton onClick={() => setShowFind(false)} />
+            </p>
             <Card.Title>User Data</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
               <b className="ms-3">{users.userInfo.email}</b>
@@ -178,11 +199,7 @@ const Users = (props) => {
               </Button>
             </div>
           </Alert>
-          <Button
-            type="button"
-            variant="danger"
-            onClick={() => setShowDelete(true)}
-          >
+          <Button type="button" variant="danger" onClick={deleteButton}>
             Delete
           </Button>
         </Form>
