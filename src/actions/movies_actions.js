@@ -5,24 +5,38 @@ export const addMovie = (input, movieProp) => {
     movieProp: movieProp,
   };
 };
-// export const addGenre = (movieProp) => {
-//   return {
-//     type: 'ADD_GENRE',
-//     movieProp: movieProp,
-//   };
-// };
-// export const addYear = (movieProp) => {
-//   return {
-//     type: 'ADD_YEAR',
-//     movieProp: movieProp,
-//   };
-// };
-// export const addLength = (movieProp) => {
-//   return {
-//     type: 'ADD_LENGTH',
-//     movieProp: movieProp,
-//   };
-// };
+export const findMovie = (movie) => {
+  return {
+    type: 'FIND_MOVIE',
+    movie: movie,
+  };
+};
+export const storeMovie = (data) => {
+  return {
+    type: 'STORE_MOVIE_DATA',
+    data: data,
+  };
+};
+export const updateMovie = (input, movieProp) => {
+  return {
+    type: 'UPDATE_MOVIE',
+    input: input,
+    movieProp: movieProp,
+  };
+};
+export const resetUpdate = (obj) => {
+  return {
+    type: 'RESET_UPDATE',
+    obj: obj,
+  };
+};
+export const storeMovieId = (id) => {
+  return {
+    type: 'STORE_ID',
+    id: id,
+  };
+};
+
 // export const registerPassword = (password) => {
 //   return {
 //     type: 'REGISTER_PASSWORD',

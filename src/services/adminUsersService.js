@@ -4,6 +4,7 @@ import {
   logInEmail,
   logInPassword,
   adminAccount,
+  isLoggedIn,
 } from '../actions/adminUser_actions';
 import { store } from '../stores/store';
 
@@ -27,9 +28,11 @@ class AdminUserService {
         throw newUser.error;
       }
       console.log('newUser:', newUser);
+      if (newUser.token) {
+        store.dispatch(isLoggedIn(true));
+      }
       localStorage.setItem('tk', newUser.token);
       store.dispatch(adminAccount(newUser.account));
-      alert('User Successfuly created!!');
     } catch (error) {
       console.log(error);
       alert(error);
@@ -43,15 +46,18 @@ class AdminUserService {
       const user = await post(
         '/api/login',
         JSON.stringify({
-          email: appStore.users.loginEmail,
-          password: appStore.users.loginPassword,
+          email: appStore.logInEmail,
+          password: appStore.logInPassword,
         })
       );
       if (user.error) {
         throw user.error;
       }
+      if (user.token) {
+        store.dispatch(isLoggedIn(true));
+      }
       localStorage.setItem('tk', user.token);
-      alert('User Successfuly logged!!');
+      store.dispatch(adminAccount(user.account));
     } catch (error) {
       console.log(error);
       alert(error);

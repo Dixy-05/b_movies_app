@@ -1,8 +1,6 @@
 import {
   registerEmail,
   registerPassword,
-  loginEmail,
-  loginPassword,
   findUser,
   deleteUser,
   userInfo,
@@ -19,7 +17,7 @@ class UserService {
     const appStore = await getStore();
     try {
       const newUser = await post(
-        '/api/register',
+        '/api/users',
         JSON.stringify({
           email: appStore.users.registerEmail,
           password: appStore.users.registerPassword,
@@ -28,37 +26,13 @@ class UserService {
       if (newUser.error) {
         throw newUser.error;
       }
-      console.log('newUser:', newUser);
-      localStorage.setItem('tk', newUser.token);
-      alert('User Successfuly created!!');
+      alert(`User ${newUser.user[0].email} Successfuly created!!`);
     } catch (error) {
       console.log(error);
       alert(error);
     }
     store.dispatch(registerEmail(''));
     store.dispatch(registerPassword(''));
-  }
-  async loginUser() {
-    const appStore = await getStore();
-    try {
-      const user = await post(
-        '/api/login',
-        JSON.stringify({
-          email: appStore.users.loginEmail,
-          password: appStore.users.loginPassword,
-        })
-      );
-      if (user.error) {
-        throw user.error;
-      }
-      localStorage.setItem('tk', user.token);
-      alert('User Successfuly logged!!');
-    } catch (error) {
-      console.log(error);
-      alert(error);
-    }
-    store.dispatch(loginEmail(''));
-    store.dispatch(loginPassword(''));
   }
   async getUser() {
     const appStore = await getStore();
@@ -68,7 +42,6 @@ class UserService {
         if (user.error) {
           throw user.error;
         }
-        console.log('getUser:', user);
         store.dispatch(userInfo(user.user));
       } catch (error) {
         console.log(error);

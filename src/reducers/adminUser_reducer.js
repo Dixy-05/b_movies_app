@@ -4,7 +4,7 @@ const initialState = {
   logInEmail: '',
   logInPassword: '',
   adminUserAccount: '',
-  loggedIn: false,
+  loggedIn: localStorage.getItem('tk') ? true : false,
 };
 
 const adminUserReducer = (state = initialState, action) => {
@@ -21,13 +21,13 @@ const adminUserReducer = (state = initialState, action) => {
         ...state,
         signUpPassword: password,
       };
-    case 'LOGIN_EMAIL':
+    case 'ADMIN_EMAIL':
       let loginEmail = action.email;
       return {
         ...state,
         logInEmail: loginEmail,
       };
-    case 'LOGIN_PASSWORD':
+    case 'ADMIN_PASSWORD':
       let loginPassword = action.password;
       return {
         ...state,
@@ -43,7 +43,7 @@ const adminUserReducer = (state = initialState, action) => {
       let token = action.token;
       return {
         ...state,
-        LoggedIn: token ? true : false,
+        loggedIn: token,
       };
 
     default:

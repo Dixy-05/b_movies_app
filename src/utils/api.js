@@ -10,7 +10,6 @@ export const requestApi = async (url, body, options) => {
   if (body) {
     requestOptions.body = body;
   }
-  console.log({ ...requestOptions, ...options });
 
   const response = await fetch(apiUrl + url, {
     ...requestOptions,
@@ -20,7 +19,7 @@ export const requestApi = async (url, body, options) => {
   return resJson;
 };
 
-export const get = (url, options) => {
+export const get = async (url, options) => {
   return requestApi(url, false, { method: 'GET', ...options });
 };
 

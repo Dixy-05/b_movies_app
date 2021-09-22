@@ -11,8 +11,10 @@ import adminUsersService from '../services/adminUsersService';
 const Home = () => {
   const adminUsers = useSelector((state) => state.adminUsers);
   const dispatch = useDispatch();
-  console.log('adminUsers:', adminUsers);
 
+  if (adminUsers.loggedIn) {
+    return <div></div>;
+  }
   return (
     <div>
       <h2 className="mt-3 ms-3">Best-Movies/admin </h2>
@@ -47,7 +49,7 @@ const Home = () => {
               type="button"
               onClick={adminUsersService.loginAdminUser}
             >
-              Submit
+              submit
             </Button>
           </Form>
         </Container>

@@ -1,12 +1,14 @@
 import {
   addMovie,
-  addGenre,
-  addYear,
-  addLength,
+  findMovie,
+  storeMovie,
+  updateMovie,
+  storeMovieId,
+  resetUpdate,
 } from '../actions/movies_actions';
 import { store } from '../stores/store';
 
-const { get, post, del } = require('../utils/api');
+const { get, post, del, put } = require('../utils/api');
 const getStore = async () => {
   const state = await store.getState();
   return state;
@@ -14,71 +16,73 @@ const getStore = async () => {
 class movieService {
   async addNewMovie() {
     const appStore = await getStore();
-    // console.log('movieTitle', appStore.movies.addMovie.movieTitle);
-    // console.log(appStore.movies.addMovie);
-    //     try {
-    //       const newUser = await post(
-    //         '/api/register',
-    //         JSON.stringify({
-    //           email: appStore.users.registerEmail,
-    //           password: appStore.users.registerPassword,
-    //         })
-    //       );
-    //       if (newUser.error) {
-    //         throw newUser.error;
-    //       }
-    //       console.log('newUser:', newUser);
-    //       localStorage.setItem('tk', newUser.token);
-    //       alert('User Successfuly created!!');
-    //     } catch (error) {
-    //       console.log(error);
-    //       alert(error);
-    //     }
+    const appMovies = appStore.movies;
+    console.log('addMovie', appStore.movies.addMovie);
+    try {
+      const movie = await post(
+        '/api/movies',
+        JSON.stringify({
+          title: appMovies.addMovie.movieTitle,
+          genre: appMovies.addMovie.movieGenre,
+          year: appMovies.addMovie.movieYear,
+          movieLength: appMovies.addMovie.movieLength,
+        })
+      );
+      if (movie.error) {
+        throw movie.error;
+      }
+      console.log('movie:', movie);
+      alert(`The movie ${movie.movie.title} has been created !!`);
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
 
     store.dispatch(addMovie('', 'movieTitle'));
     store.dispatch(addMovie('', 'movieGenre'));
     store.dispatch(addMovie('', 'movieYear'));
     store.dispatch(addMovie('', 'movieLength'));
   }
-  async loginUser() {
+  async findMovie() {
     const appStore = await getStore();
     try {
-      const user = await post(
-        '/api/login',
-        JSON.stringify({
-          email: appStore.users.loginEmail,
-          password: appStore.users.loginPassword,
-        })
-      );
-      if (user.error) {
-        throw user.error;
+      const movie = await get(`/api/movies/${appStore.movies.findMovieTitle}`);
+      console.log('movies service:', movie.movie);
+      if (movie.error) {
+        throw movie.error;
       }
-      localStorage.setItem('tk', user.token);
-      alert('User Successfuly logged!!');
+      store.dispatch(storeMovie(movie.movie));
     } catch (error) {
       console.log(error);
+      store.dispatch(
+        storeMovie({ id: '', title: '', genre: '', year: '', movie_length: '' })
+      );
       alert(error);
     }
-    // store.dispatch(loginEmail(''));
-    // store.dispatch(loginPassword(''));
+    store.dispatch(findMovie(''));
   }
-  async getUser() {
+  async updateMovie() {
     const appStore = await getStore();
-    if (appStore.users.findEmail) {
-      try {
-        const user = await get(`/api/users/${appStore.users.findEmail}`);
-        if (user.error) {
-          throw user.error;
-        }
-        console.log('getUser:', user);
-        // store.dispatch(userInfo(user.user));
-      } catch (error) {
-        console.log(error);
+    try {
+      const movie = await put(
+        `/api/movies/${appStore.movies.movieId}`,
+        JSON.stringify(appStore.movies.updateMovie)
+      );
+      if (movie.error) {
+        throw movie.error;
       }
-    } else {
-      alert('Input fiel must have an Email to find User');
+      console.log('getUser:', movie);
+      alert('Movie successfuly updated');
+    } catch (error) {
+      console.log(error);
     }
-    // store.dispatch(findUser(''));
+
+    store.dispatch(updateMovie('', 'title'));
+    store.dispatch(updateMovie('', 'genre'));
+    store.dispatch(updateMovie('', 'year'));
+    store.dispatch(updateMovie('', 'movieLength'));
+    store.dispatch(storeMovieId(''));
+    store.dispatch(resetUpdate({}));
   }
   async deleteUser() {
     const appStore = await getStore();

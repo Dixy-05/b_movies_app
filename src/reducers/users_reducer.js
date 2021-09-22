@@ -1,8 +1,6 @@
 const initialState = {
   registerEmail: '',
   registerPassword: '',
-  loginEmail: '',
-  loginPassword: '',
   findEmail: '',
   deleteEmail: '',
   userInfo: {},
@@ -21,18 +19,6 @@ const usersReducer = (state = initialState, action) => {
       return {
         ...state,
         registerPassword: newRegisterPassword,
-      };
-    case 'LOGIN_EMAIL':
-      let newLoginEmail = action.email;
-      return {
-        ...state,
-        loginEmail: newLoginEmail,
-      };
-    case 'LOGIN_PASSWORD':
-      let newLoginPassword = action.password;
-      return {
-        ...state,
-        loginPassword: newLoginPassword,
       };
     case 'FIND_EMAIL':
       let newFindEmail = action.email;

@@ -1,36 +1,66 @@
 import React from 'react';
-import { useState } from 'react';
-import { Form, Button, Container, Card, Row, Col } from 'react-bootstrap';
+import {
+  Form,
+  Button,
+  Container,
+  Card,
+  Row,
+  Col,
+  CloseButton,
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addMovie,
-  addGenre,
-  addYear,
-  addLength,
+  findMovie,
+  updateMovie,
+  storeMovieId,
 } from '../actions/movies_actions';
 import movieService from '../services/moviesService';
+import { useState } from 'react';
 
 const Movies = (props) => {
+  const [show, setShow] = useState(false);
   const movies = useSelector((state) => state.movies);
   const dispatch = useDispatch();
-
-  const [newMovie, setNewMovie] = useState({
-    movieTitle: '',
-    movieGenre: '',
-    movieYear: '',
-    movieLength: '',
-  });
 
   const handleAddMovie = () => {
     movieService.addNewMovie();
     console.log('redux State', movies);
+  };
+  const handleUpdateMovie = () => {
+    if (movies.movieId === '') {
+      alert('Must give a movie Id');
+      return;
+    }
+    if (
+      movies.updateMovie.title === '' &&
+      movies.updateMovie.genre === '' &&
+      movies.updateMovie.year === '' &&
+      movies.updateMovie.movieLength === ''
+    ) {
+      alert('One or more of the input fields must have data to update');
+      return;
+    }
+    movieService.updateMovie();
+    console.log('redux State', movies.updateMovie);
+  };
+  const handleFindMovie = () => {
+    console.log(movies.findMovieTitle);
+    if (movies.findMovieTitle === '') {
+      alert('Input fiel must have a movie title');
+      return;
+    }
+    console.log('state:', movies);
+    movieService.findMovie();
+    movies.findMovieTitle !== '' && setShow(true);
+    movies.movieData.id !== '' && setShow(false);
   };
 
   return (
     <div>
       <Container>
         <Form id="addMovie-Form">
-          <h1>Add Movies</h1>
+          <h1>Add Movie</h1>
           <Row>
             <Col md>
               <Form.Group className="mb-3">
@@ -65,6 +95,7 @@ const Movies = (props) => {
               <Form.Group className="mb-3">
                 <Form.Label>Movie Year</Form.Label>
                 <Form.Control
+                  placeholder="Enter year"
                   type="number"
                   value={movies.addMovie.movieYear}
                   onChange={(e) =>
@@ -79,7 +110,7 @@ const Movies = (props) => {
                 <Form.Control
                   type="text"
                   value={movies.addMovie.movieLength}
-                  placeholder="Enter time"
+                  placeholder="Enter time e.g. 02:30:00"
                   onChange={(e) =>
                     dispatch(addMovie(e.target.value, 'movieLength'))
                   }
@@ -104,135 +135,140 @@ const Movies = (props) => {
               autoComplete="off"
               type="text"
               placeholder="Enter movie title"
-              // onChange={(e) => props.setEmail(e.target.value)}
-              value={props.movie}
+              onChange={(e) => dispatch(findMovie(e.target.value))}
+              value={movies.findMovieTitle}
             />
-            <Form.Text id="warning" className="text-muted"></Form.Text>
           </Form.Group>
-          <Button
-            type="button"
-            variant="primary"
-            // onClick={handleFind}
-          >
+          <Button type="button" variant="primary" onClick={handleFindMovie}>
             Find
           </Button>
         </Form>
         <Card
           style={{
             width: '30rem',
-            // display: showFind ? 'block' : 'none',
+            display: show ? 'block' : 'none',
             marginTop: '1em',
           }}
         >
           <Card.Body>
-            <Card.Title>Movie Data</Card.Title>
+            <p className="d-flex justify-content-end ">
+              {' '}
+              <CloseButton onClick={() => setShow(false)} />
+            </p>
+
+            <Card.Title>Movie</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-              {/* <b className="ms-3">{props.movieInfo.email}</b> */}
+              <b className="ms-3">{movies.movieData.title}</b>
             </Card.Subtitle>
             <ul>
               <li>
-                <b className="me-2">User id:</b>
-                {/* {props.movieInfo.id} */}
+                <b className="me-2">Id: </b>
+                {movies.movieData.id}
+              </li>
+              <li>
+                <b className="me-2">Genre: </b>
+                {movies.movieData.genre}
+              </li>
+              <li>
+                <b className="me-2">Year:</b>
+                {movies.movieData.year}
+              </li>
+              <li>
+                <b className="me-2">Length:</b>
+                {movies.movieData.movie_length}
               </li>
               <li>
                 <b className="me-2">Creation date:</b>
-                {/* {props.movieInfo.title} */}
-              </li>
-              <li>
-                <b className="me-2">Creation date:</b>
-                {/* {props.movieInfo.genre} */}
-              </li>
-              <li>
-                <b className="me-2">Creation date:</b>
-                {/* {props.movieInfo.year} */}
-              </li>
-              <li>
-                <b className="me-2">Creation date:</b>
-                {/* {props.movieInfo.movie_length} */}
+                {movies.movieData.created_at}
               </li>
             </ul>
           </Card.Body>
         </Card>
       </Container>
 
-      {/* <hr />
-
+      <hr />
       <Container>
-        <Form id="Login-Form">
-          <h1>Login User</h1>
-          <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              value={props.email}
-              type="email"
-              placeholder="Enter email"
-              onChange={(e) => props.setEmail(e.target.value)}
-            />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
-          </Form.Group>
+        <Form id="update-Form">
+          <h1>Update Movie</h1>
+          <Row>
+            <Col sm>
+              <Form.Group className="mb-3">
+                <Form.Label>Movie Id</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={movies.movieId}
+                  placeholder="Enter Id"
+                  onChange={(e) => dispatch(storeMovieId(e.target.value))}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md>
+              <Form.Group className="mb-3">
+                <Form.Label>Movie Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={movies.updateMovie.title && movies.updateMovie.title}
+                  placeholder="Enter title"
+                  onChange={(e) =>
+                    dispatch(updateMovie(e.target.value, 'title'))
+                  }
+                />
+              </Form.Group>
+            </Col>
+            <Col md>
+              <Form.Group className="mb-3">
+                <Form.Label>Movie Genre</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={movies.updateMovie.genre && movies.updateMovie.genre}
+                  placeholder="Enter genre"
+                  onChange={(e) =>
+                    dispatch(updateMovie(e.target.value, 'genre'))
+                  }
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              value={props.password}
-              type="password"
-              placeholder="Password"
-              onChange={(e) => props.setPassword(e.target.value)}
-            />
-          </Form.Group>
-          <Button variant="primary" type="button" onClick={props.login}>
-            Submit
+          <Row>
+            <Col sm>
+              <Form.Group className="mb-3">
+                <Form.Label>Movie Year</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter year"
+                  value={movies.updateMovie.year && movies.updateMovie.year}
+                  onChange={(e) =>
+                    dispatch(updateMovie(e.target.value, 'year'))
+                  }
+                />
+              </Form.Group>
+            </Col>
+            <Col sm>
+              <Form.Group className="mb-3">
+                <Form.Label>Movie Length</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={
+                    movies.updateMovie.movieLength &&
+                    movies.updateMovie.movieLength
+                  }
+                  placeholder="Enter time e.g. 02:30:00"
+                  onChange={(e) =>
+                    dispatch(updateMovie(e.target.value, 'movieLength'))
+                  }
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Button variant="primary" type="button" onClick={handleUpdateMovie}>
+            Add
           </Button>
         </Form>
       </Container>
-      <hr /> */}
-
-      {/* <hr />
-      <Container>
-        <Form id="Delete-Form">
-          <h1>Delete User</h1>
-          <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              autoComplete="off"
-              type="email"
-              placeholder="Enter email"
-              onChange={(e) => props.setEmail(e.target.value)}
-              value={props.email}
-            />
-            <Form.Text id="warning" className="text-muted"></Form.Text>
-          </Form.Group>
-          <Alert show={showDelete} variant="light">
-            <Alert.Heading>Are you sure you want to delete user?</Alert.Heading>
-            <hr />
-            <div className="d-flex justify-content-center">
-              <Button
-                type="button"
-                onClick={deleteUser}
-                variant="outline-danger"
-              >
-                Yes
-              </Button>
-              <Button
-                className="ms-2"
-                onClick={() => setShowDelete(false)}
-                variant="outline-primary"
-              >
-                No
-              </Button>
-            </div>
-          </Alert>
-          <Button
-            type="button"
-            variant="danger"
-            onClick={() => setShowDelete(true)}
-          >
-            Delete
-          </Button>
-        </Form>
-      </Container> */}
     </div>
   );
 };

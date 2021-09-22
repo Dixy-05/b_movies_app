@@ -11,17 +11,18 @@ import {
 import {
   registerEmail,
   registerPassword,
-  loginEmail,
-  loginPassword,
   findUser,
   deleteUser,
 } from '../actions/users_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import usersService from '../services/usersServices';
+// import { TokenTimeout } from '../utils/tokenTimeout';
 
 const Users = (props) => {
   const users = useSelector((state) => state.users);
+  // const auth = useSelector((state) => state.adminUsers);
   const dispatch = useDispatch();
+  // auth.loggedIn === true && (await TokenTimeout());
 
   const [showDelete, setShowDelete] = useState(false);
   const [showFind, setShowFind] = useState(false);
@@ -46,7 +47,7 @@ const Users = (props) => {
     <React.Fragment>
       <Container>
         <Form id="Register-Form">
-          <h1>Register User</h1>
+          <h1>Create User</h1>
           <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -73,41 +74,6 @@ const Users = (props) => {
             variant="primary"
             type="button"
             onClick={usersService.createUser}
-          >
-            Submit
-          </Button>
-        </Form>
-      </Container>
-      <hr />
-      <Container>
-        <Form id="Login-Form">
-          <h1>Login User</h1>
-          <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              value={users.loginEmail}
-              type="email"
-              placeholder="Enter email"
-              onChange={(e) => dispatch(loginEmail(e.target.value))}
-            />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              value={users.loginPassword}
-              type="password"
-              placeholder="Password"
-              onChange={(e) => dispatch(loginPassword(e.target.value))}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={usersService.loginUser}
           >
             Submit
           </Button>

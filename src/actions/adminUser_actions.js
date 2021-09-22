@@ -12,13 +12,13 @@ export const signUpPassword = (password) => {
 };
 export const logInEmail = (email) => {
   return {
-    type: 'lOGIN_EMAIL',
+    type: 'ADMIN_EMAIL',
     email: email,
   };
 };
 export const logInPassword = (password) => {
   return {
-    type: 'LOGIN_PASSWORD',
+    type: 'ADMIN_PASSWORD',
     password: password,
   };
 };
@@ -28,9 +28,9 @@ export const adminAccount = (email) => {
     account: email,
   };
 };
-export const isLoggedIn = (token) => {
+export const isLoggedIn = (boolean) => {
   return {
     type: 'IS_LOGGEDIN',
-    token: token,
+    token: boolean,
   };
 };

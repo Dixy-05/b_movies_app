@@ -7,6 +7,7 @@ import Home from './modules/home';
 import Users from './modules/users';
 import Movies from './modules/movies';
 import Subscriptions from './modules/subscriptions';
+import AuthRoute from './utils/authRoute';
 
 function App() {
   return (
@@ -15,16 +16,16 @@ function App() {
       <div className="App">
         <AppNavs />
         <Switch>
-          <Route exact path="/">
+          <AuthRoute exact path="/" type="guest">
             <Home />
-          </Route>
-          <Route exact path="/users">
+          </AuthRoute>
+          <Route path="/users" type="private">
             <Users />
           </Route>
-          <Route path="/movies">
+          <Route path="/movies" type="private">
             <Movies />
           </Route>
-          <Route path="/subscriptions">
+          <Route path="/subscriptions" type="private">
             <Subscriptions />
           </Route>
         </Switch>
@@ -34,5 +35,3 @@ function App() {
 }
 
 export default App;
-
-// email: mani@gmail.com password: Mal2345To45

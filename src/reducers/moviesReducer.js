@@ -5,8 +5,16 @@ const initialState = {
     movieYear: '',
     movieLength: '',
   },
+  updateMovie: {},
+  movieId: '',
   findMovieTitle: '',
-  movieData: {},
+  movieData: {
+    id: '',
+    title: '',
+    genre: '',
+    year: '',
+    movie_length: '',
+  },
 };
 
 const moviesReducer = (state = initialState, action) => {
@@ -19,26 +27,40 @@ const moviesReducer = (state = initialState, action) => {
         addMovie: { ...state.addMovie, [movieProp]: input },
       };
 
-    //     case 'ADD_GENRE':
-    //       let genre = action.movieProp;
-    //       return {
-    //         ...state,
-    //         addMovie: { ...state.addMovie, movieGenre: genre },
-    //       };
+    case 'FIND_MOVIE':
+      let movie = action.movie;
+      return {
+        ...state,
+        findMovieTitle: movie,
+      };
 
-    //     case 'ADD_YEAR':
-    //       let year = action.movieProp;
-    //       return {
-    //         ...state,
-    //         addMovie: { ...state.addMovie, movieYear: year },
-    //       };
+    case 'STORE_MOVIE_DATA':
+      let data = action.data;
+      return {
+        ...state,
+        movieData: data,
+      };
 
-    //     case 'ADD_LENGTH':
-    //       let length = action.movieProp;
-    //       return {
-    //         ...state,
-    //         addMovie: { ...state.addMovie, movieLength: length },
-    //       };
+    case 'UPDATE_MOVIE':
+      let update = action.input;
+      let movieProperty = action.movieProp;
+      return {
+        ...state,
+        updateMovie: { ...state.updateMovie, [movieProperty]: update },
+      };
+    case 'RESET_UPDATE':
+      let object = action.obj;
+      return {
+        ...state,
+        updateMovie: object,
+      };
+
+    case 'STORE_ID':
+      let id = action.id;
+      return {
+        ...state,
+        movieId: id,
+      };
 
     default:
       return state;

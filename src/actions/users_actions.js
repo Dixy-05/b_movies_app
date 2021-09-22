@@ -10,18 +10,6 @@ export const registerPassword = (password) => {
     password: password,
   };
 };
-export const loginEmail = (email) => {
-  return {
-    type: 'LOGIN_EMAIL',
-    email: email,
-  };
-};
-export const loginPassword = (password) => {
-  return {
-    type: 'LOGIN_PASSWORD',
-    password: password,
-  };
-};
 export const findUser = (email) => {
   return {
     type: 'FIND_EMAIL',

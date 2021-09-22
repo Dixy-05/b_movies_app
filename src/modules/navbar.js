@@ -16,6 +16,7 @@ import {
   signUpEmail,
   signUpPassword,
   adminAccount,
+  isLoggedIn,
 } from '../actions/adminUser_actions';
 
 const AppNavbar = () => {
@@ -33,10 +34,17 @@ const AppNavbar = () => {
   };
 
   const handleLogout = () => {
+    dispatch(isLoggedIn(false));
     localStorage.removeItem('tk');
     dispatch(adminAccount(''));
   };
 
+  const handleMessage = () => {
+    if (adminUsers.loggedIn) {
+      return <span>Log-Out</span>;
+    }
+    return <span>Not LoggedIn</span>;
+  };
   return (
     <React.Fragment>
       <Navbar bg="dark" variant="dark" expand="md">
@@ -54,10 +62,9 @@ const AppNavbar = () => {
                 <NavDropdown.Item href="#action/3.1">
                   {adminUsers.adminUserAccount}
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Log-In</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item as={Link} to="/" onClick={handleLogout}>
-                  Log-Out
+                  {handleMessage()}
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
