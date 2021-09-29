@@ -3,7 +3,11 @@ const initialState = {
   registerPassword: '',
   findEmail: '',
   deleteEmail: '',
-  userInfo: {},
+  userInfo: {
+    // email: '',
+    // id: '',
+    // created_at: '',
+  },
 };
 
 const usersReducer = (state = initialState, action) => {

@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import {
   Form,
   Button,
@@ -7,6 +9,7 @@ import {
   Row,
   Col,
   CloseButton,
+  Alert,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,14 +17,19 @@ import {
   findMovie,
   updateMovie,
   storeMovieId,
+  delete_movie,
 } from '../actions/movies_actions';
 import movieService from '../services/moviesService';
 import { useState } from 'react';
+import { store } from '../stores/store';
 
 const Movies = (props) => {
-  const [show, setShow] = useState(false);
+  const updatedMovie = () => store.getState();
+  const { movieData } = props;
   const movies = useSelector((state) => state.movies);
   const dispatch = useDispatch();
+  const [show, setShow] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const handleAddMovie = () => {
     movieService.addNewMovie();
@@ -44,18 +52,27 @@ const Movies = (props) => {
     movieService.updateMovie();
     console.log('redux State', movies.updateMovie);
   };
-  const handleFindMovie = () => {
-    console.log(movies.findMovieTitle);
+  const handleFindMovie = async () => {
     if (movies.findMovieTitle === '') {
       alert('Input fiel must have a movie title');
       return;
     }
-    console.log('state:', movies);
-    movieService.findMovie();
+    const movie = await movieService.findMovie();
     movies.findMovieTitle !== '' && setShow(true);
-    movies.movieData.id !== '' && setShow(false);
+    !movie && setShow(false);
   };
 
+  const handleRemoveMovie = () => {
+    movieService.deleteMovie();
+    setShowDelete(false);
+  };
+  const handleDeleteButton = () => {
+    if (movies.deleteMovieId === '') {
+      alert('Must enter a movie Id');
+      return;
+    }
+    setShowDelete(true);
+  };
   return (
     <div>
       <Container>
@@ -158,28 +175,36 @@ const Movies = (props) => {
 
             <Card.Title>Movie</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-              <b className="ms-3">{movies.movieData.title}</b>
+              <b className="ms-3">
+                {movieData.title}
+                {/* {movies.movieData.title} */}
+              </b>
             </Card.Subtitle>
             <ul>
               <li>
                 <b className="me-2">Id: </b>
-                {movies.movieData.id}
+                {movieData.id}
+                {/* {movies.movieData.id} */}
               </li>
               <li>
                 <b className="me-2">Genre: </b>
-                {movies.movieData.genre}
+                {movieData.genre}
+                {/* {movies.movieData.genre} */}
               </li>
               <li>
                 <b className="me-2">Year:</b>
-                {movies.movieData.year}
+                {movieData.year}
+                {/* {movies.movieData.year} */}
               </li>
               <li>
                 <b className="me-2">Length:</b>
-                {movies.movieData.movie_length}
+                {movieData.movie_length}
+                {/* {movies.movieData.movie_length} */}
               </li>
               <li>
                 <b className="me-2">Creation date:</b>
-                {movies.movieData.created_at}
+                {movieData.created_at}
+                {/* {movies.movieData.created_at} */}
               </li>
             </ul>
           </Card.Body>
@@ -269,8 +294,54 @@ const Movies = (props) => {
           </Button>
         </Form>
       </Container>
+      <hr />
+      <Container>
+        <Form id="DeleteMovie-Form">
+          <h1>Delete Movie</h1>
+          <Form.Group className="mb-3">
+            <Form.Label>Movie Id</Form.Label>
+            <Form.Control
+              autoComplete="off"
+              type="email"
+              placeholder="Enter movie Id"
+              onChange={(e) => dispatch(delete_movie(e.target.value))}
+              value={movies.deleteMovieId}
+            />
+            <Form.Text id="warning" className="text-muted"></Form.Text>
+          </Form.Group>
+          <Alert show={showDelete} variant="light">
+            <Alert.Heading>Are you sure you want to delete user?</Alert.Heading>
+            <hr />
+            <div className="d-flex justify-content-center">
+              <Button
+                type="button"
+                onClick={handleRemoveMovie}
+                variant="outline-danger"
+              >
+                Yes
+              </Button>
+              <Button
+                className="ms-2"
+                onClick={() => setShowDelete(false)}
+                variant="outline-primary"
+              >
+                No
+              </Button>
+            </div>
+          </Alert>
+          <Button type="button" variant="danger" onClick={handleDeleteButton}>
+            Delete
+          </Button>
+        </Form>
+      </Container>
     </div>
   );
 };
 
-export default Movies;
+const mapStateToProps = (state) => {
+  return {
+    movieData: state.movies.movieData,
+  };
+};
+
+export default connect(mapStateToProps)(Movies);

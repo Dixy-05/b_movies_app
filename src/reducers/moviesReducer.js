@@ -14,7 +14,9 @@ const initialState = {
     genre: '',
     year: '',
     movie_length: '',
+    created_at: '',
   },
+  deleteMovieId: '',
 };
 
 const moviesReducer = (state = initialState, action) => {
@@ -35,8 +37,11 @@ const moviesReducer = (state = initialState, action) => {
       };
 
     case 'STORE_MOVIE_DATA':
-      let data = action.data;
+      // const { id, title, genre, movie_length, created_at } = action.data;
+      const data = action.data;
       return {
+        // ...state,
+        // movieData: { id, title, genre, movie_length, created_at },
         ...state,
         movieData: data,
       };
@@ -56,10 +61,16 @@ const moviesReducer = (state = initialState, action) => {
       };
 
     case 'STORE_ID':
-      let id = action.id;
+      let storeId = action.id;
       return {
         ...state,
-        movieId: id,
+        movieId: storeId,
+      };
+    case 'DELETE_MOVIE':
+      const id = action.id;
+      return {
+        ...state,
+        deleteMovieId: id,
       };
 
     default:

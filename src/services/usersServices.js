@@ -36,18 +36,16 @@ class UserService {
   }
   async getUser() {
     const appStore = await getStore();
-    if (appStore.users.findEmail) {
-      try {
-        const user = await get(`/api/users/${appStore.users.findEmail}`);
-        if (user.error) {
-          throw user.error;
-        }
-        store.dispatch(userInfo(user.user));
-      } catch (error) {
-        console.log(error);
+    try {
+      const user = await get(`/api/users/${appStore.users.findEmail}`);
+      if (user.error) {
+        throw user.error;
       }
-    } else {
-      alert('Input fiel must have an Email to find User');
+      store.dispatch(userInfo(user.user));
+    } catch (error) {
+      console.log(error);
+      store.dispatch(userInfo({ id: '', email: '', created_at: '' }));
+      alert(error);
     }
     store.dispatch(findUser(''));
   }

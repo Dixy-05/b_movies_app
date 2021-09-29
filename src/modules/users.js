@@ -16,13 +16,10 @@ import {
 } from '../actions/users_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import usersService from '../services/usersServices';
-// import { TokenTimeout } from '../utils/tokenTimeout';
 
 const Users = (props) => {
   const users = useSelector((state) => state.users);
-  // const auth = useSelector((state) => state.adminUsers);
   const dispatch = useDispatch();
-  // auth.loggedIn === true && (await TokenTimeout());
 
   const [showDelete, setShowDelete] = useState(false);
   const [showFind, setShowFind] = useState(false);
@@ -38,9 +35,18 @@ const Users = (props) => {
       alert('Input fiel must have an Email to delete User');
     }
   };
-  const handleFind = () => {
+  const handleFind = async () => {
+    console.log('users state:', users.userInfo);
+    console.log('handle Find:', await users.userInfo.email);
+    if (users.findEmail === '') {
+      alert('Input field must have an Email');
+      return;
+    }
     usersService.getUser();
-    users.findEmail && setShowFind(true);
+    users.findEmail !== '' && setShowFind(true);
+    setTimeout(() => {
+      users.userInfo.email === '' && setShowFind(false);
+    }, 500);
   };
 
   return (

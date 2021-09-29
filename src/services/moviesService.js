@@ -9,15 +9,12 @@ import {
 import { store } from '../stores/store';
 
 const { get, post, del, put } = require('../utils/api');
-const getStore = async () => {
-  const state = await store.getState();
-  return state;
-};
+
 class movieService {
+  state = () => store.getState();
   async addNewMovie() {
-    const appStore = await getStore();
-    const appMovies = appStore.movies;
-    console.log('addMovie', appStore.movies.addMovie);
+    const appMovies = this.state().movies;
+    console.log('addMovie', this.state().movies.addMovie);
     try {
       const movie = await post(
         '/api/movies',
@@ -44,29 +41,28 @@ class movieService {
     store.dispatch(addMovie('', 'movieLength'));
   }
   async findMovie() {
-    const appStore = await getStore();
+    const appStore = this.state().movies;
     try {
-      const movie = await get(`/api/movies/${appStore.movies.findMovieTitle}`);
-      console.log('movies service:', movie.movie);
+      const movie = await get(`/api/movies/${appStore.findMovieTitle}`);
       if (movie.error) {
         throw movie.error;
       }
       store.dispatch(storeMovie(movie.movie));
+      console.log('movie from service:', movie);
+      return movie;
     } catch (error) {
       console.log(error);
-      store.dispatch(
-        storeMovie({ id: '', title: '', genre: '', year: '', movie_length: '' })
-      );
+      // store.dispatch(storeMovie({}));
       alert(error);
     }
     store.dispatch(findMovie(''));
   }
   async updateMovie() {
-    const appStore = await getStore();
+    const appStore = this.state().movies;
     try {
       const movie = await put(
-        `/api/movies/${appStore.movies.movieId}`,
-        JSON.stringify(appStore.movies.updateMovie)
+        `/api/movies/${appStore.movieId}`,
+        JSON.stringify(appStore.updateMovie)
       );
       if (movie.error) {
         throw movie.error;
@@ -84,19 +80,18 @@ class movieService {
     store.dispatch(storeMovieId(''));
     store.dispatch(resetUpdate({}));
   }
-  async deleteUser() {
-    const appStore = await getStore();
+  async deleteMovie() {
+    const appStore = this.state().movies;
     try {
-      const user = await del(`/api/users/${appStore.users.deleteEmail}`);
-      if (user.error) {
-        throw user.error;
+      const movie = await del(`/api/movies/${appStore.deleteMovieId}`);
+      if (movie.error) {
+        throw movie.error;
       }
-      alert('User Successfuly deleted!!');
+      alert('Movie was successfuly deleted');
     } catch (error) {
       console.log(error);
       alert(error);
     }
-    // store.dispatch(deleteUser(''));
   }
 }
 
