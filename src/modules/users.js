@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Form,
   Button,
@@ -16,8 +15,10 @@ import {
 } from '../actions/users_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import usersService from '../services/usersServices';
+import { tokenExpiration } from '../utils/tokenTimeout';
 
 const Users = (props) => {
+  // useEffect(() => handleToken(), []);
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
@@ -48,9 +49,21 @@ const Users = (props) => {
       users.userInfo.email === '' && setShowFind(false);
     }, 500);
   };
+  const handleKeyPress = (e) => {
+    if (e.which === 13) e.preventDefault();
+  };
+  // const handleToken = async () => {
+  //   setTimeout(() => {
+  //     localStorage.removeItem('tk');
+  //   }, 5000);
+  // const expiration = await tokenExpiration();
+  // return expiration;
+  // };
 
   return (
     <React.Fragment>
+      {/* <button onClick={handleToken}>test TokenExpiration</button> */}
+
       <Container>
         <Form id="Register-Form">
           <h1>Create User</h1>
@@ -96,6 +109,7 @@ const Users = (props) => {
               type="email"
               placeholder="Enter email"
               onChange={(e) => dispatch(findUser(e.target.value))}
+              onKeyPress={(e) => handleKeyPress(e)}
               value={users.findEmail}
             />
             <Form.Text id="warning" className="text-muted"></Form.Text>
@@ -137,7 +151,7 @@ const Users = (props) => {
       </Container>
 
       <hr />
-      <Container>
+      <Container className="mb-5">
         <Form id="Delete-Form">
           <h1>Delete User</h1>
           <Form.Group className="mb-3">
@@ -147,6 +161,7 @@ const Users = (props) => {
               type="email"
               placeholder="Enter email"
               onChange={(e) => dispatch(deleteUser(e.target.value))}
+              onKeyPress={(e) => handleKeyPress(e)}
               value={users.deleteEmail}
             />
             <Form.Text id="warning" className="text-muted"></Form.Text>
@@ -176,6 +191,7 @@ const Users = (props) => {
           </Button>
         </Form>
       </Container>
+      <hr />
     </React.Fragment>
   );
 };

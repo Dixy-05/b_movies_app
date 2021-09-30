@@ -7,8 +7,8 @@ import {
   resetAddSubscription,
   resetSubscriptionData,
   reset_update_subscription,
+  store_delete_id,
 } from '../actions/subscriptions_actions';
-import subscriptions from '../modules/subscriptions';
 import { store } from '../stores/store';
 const { get, post, del, put } = require('../utils/api');
 
@@ -75,11 +75,9 @@ class subscriptionService {
       console.log('upadate Subscription:', subscription);
       alert('Subscription successfuly updated');
     } catch (error) {
-      store.dispatch(reset_update_subscription({}));
       console.log(error);
       alert(error);
     }
-    console.log('working ......');
     store.dispatch(update_Subscription('', 'type'));
     store.dispatch(update_Subscription('', 'detail'));
     store.dispatch(update_Subscription('', 'months'));
@@ -87,19 +85,21 @@ class subscriptionService {
     store.dispatch(storeSubscription_id(''));
     store.dispatch(reset_update_subscription({}));
   }
-  //   async deleteMovie() {
-  //     const appStore = this.state().movies;
-  //     try {
-  //       const movie = await del(`/api/movies/${appStore.deleteMovieId}`);
-  //       if (movie.error) {
-  //         throw movie.error;
-  //       }
-  //       alert('Movie was successfuly deleted');
-  //     } catch (error) {
-  //       console.log(error);
-  //       alert(error);
-  //     }
-  //   }
+  async deleteSubscription() {
+    const appStore = this.state().subscriptions;
+    try {
+      const subscription = await del(`/api/subscriptions/${appStore.deleteId}`);
+      if (subscription.error) {
+        throw subscription.error;
+      }
+      alert('Subscription was successfuly deleted');
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
+
+    store.dispatch(store_delete_id(''));
+  }
 }
 
 export default new subscriptionService();

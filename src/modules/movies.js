@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
 import {
   Form,
   Button,
@@ -21,11 +19,8 @@ import {
 } from '../actions/movies_actions';
 import movieService from '../services/moviesService';
 import { useState } from 'react';
-import { store } from '../stores/store';
 
 const Movies = (props) => {
-  const updatedMovie = () => store.getState();
-  const { movieData } = props;
   const movies = useSelector((state) => state.movies);
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
@@ -40,12 +35,7 @@ const Movies = (props) => {
       alert('Must give a movie Id');
       return;
     }
-    if (
-      movies.updateMovie.title === '' &&
-      movies.updateMovie.genre === '' &&
-      movies.updateMovie.year === '' &&
-      movies.updateMovie.movieLength === ''
-    ) {
+    if (Object.entries(movies.updateMovie).length === 0) {
       alert('One or more of the input fields must have data to update');
       return;
     }
@@ -73,6 +63,10 @@ const Movies = (props) => {
     }
     setShowDelete(true);
   };
+  const handleKeyPress = (e) => {
+    if (e.which === 13) e.preventDefault();
+  };
+
   return (
     <div>
       <Container>
@@ -152,6 +146,7 @@ const Movies = (props) => {
               autoComplete="off"
               type="text"
               placeholder="Enter movie title"
+              onKeyPress={(e) => handleKeyPress(e)}
               onChange={(e) => dispatch(findMovie(e.target.value))}
               value={movies.findMovieTitle}
             />
@@ -175,36 +170,28 @@ const Movies = (props) => {
 
             <Card.Title>Movie</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-              <b className="ms-3">
-                {movieData.title}
-                {/* {movies.movieData.title} */}
-              </b>
+              <b className="ms-3">{movies.movieData.title}</b>
             </Card.Subtitle>
             <ul>
               <li>
                 <b className="me-2">Id: </b>
-                {movieData.id}
-                {/* {movies.movieData.id} */}
+                {movies.movieData.id}
               </li>
               <li>
                 <b className="me-2">Genre: </b>
-                {movieData.genre}
-                {/* {movies.movieData.genre} */}
+                {movies.movieData.genre}
               </li>
               <li>
                 <b className="me-2">Year:</b>
-                {movieData.year}
-                {/* {movies.movieData.year} */}
+                {movies.movieData.year}
               </li>
               <li>
                 <b className="me-2">Length:</b>
-                {movieData.movie_length}
-                {/* {movies.movieData.movie_length} */}
+                {movies.movieData.movie_length}
               </li>
               <li>
                 <b className="me-2">Creation date:</b>
-                {movieData.created_at}
-                {/* {movies.movieData.created_at} */}
+                {movies.movieData.created_at}
               </li>
             </ul>
           </Card.Body>
@@ -290,12 +277,12 @@ const Movies = (props) => {
           </Row>
 
           <Button variant="primary" type="button" onClick={handleUpdateMovie}>
-            Add
+            Update
           </Button>
         </Form>
       </Container>
       <hr />
-      <Container>
+      <Container className="mb-5">
         <Form id="DeleteMovie-Form">
           <h1>Delete Movie</h1>
           <Form.Group className="mb-3">
@@ -304,6 +291,7 @@ const Movies = (props) => {
               autoComplete="off"
               type="email"
               placeholder="Enter movie Id"
+              onKeyPress={(e) => handleKeyPress(e)}
               onChange={(e) => dispatch(delete_movie(e.target.value))}
               value={movies.deleteMovieId}
             />
@@ -334,14 +322,9 @@ const Movies = (props) => {
           </Button>
         </Form>
       </Container>
+      <hr />
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    movieData: state.movies.movieData,
-  };
-};
-
-export default connect(mapStateToProps)(Movies);
+export default Movies;

@@ -5,6 +5,7 @@ import {
   updateMovie,
   storeMovieId,
   resetUpdate,
+  delete_movie,
 } from '../actions/movies_actions';
 import { store } from '../stores/store';
 
@@ -14,7 +15,6 @@ class movieService {
   state = () => store.getState();
   async addNewMovie() {
     const appMovies = this.state().movies;
-    console.log('addMovie', this.state().movies.addMovie);
     try {
       const movie = await post(
         '/api/movies',
@@ -28,8 +28,7 @@ class movieService {
       if (movie.error) {
         throw movie.error;
       }
-      console.log('movie:', movie);
-      alert(`The movie ${movie.movie.title} has been created !!`);
+      alert(`The movie "${movie.movie.title}" has been created !!`);
     } catch (error) {
       console.log(error);
       alert(error);
@@ -48,7 +47,7 @@ class movieService {
         throw movie.error;
       }
       store.dispatch(storeMovie(movie.movie));
-      console.log('movie from service:', movie);
+      store.dispatch(findMovie(''));
       return movie;
     } catch (error) {
       console.log(error);
@@ -67,7 +66,6 @@ class movieService {
       if (movie.error) {
         throw movie.error;
       }
-      console.log('getUser:', movie);
       alert('Movie successfuly updated');
     } catch (error) {
       console.log(error);
@@ -92,6 +90,7 @@ class movieService {
       console.log(error);
       alert(error);
     }
+    store.dispatch(delete_movie(''));
   }
 }
 

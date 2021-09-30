@@ -53,3 +53,10 @@ export const reset_update_subscription = (obj) => {
     reset: obj,
   };
 };
+
+export const store_delete_id = (id) => {
+  return {
+    type: 'STORE_DELETE_ID',
+    id: id,
+  };
+};

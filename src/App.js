@@ -19,15 +19,15 @@ function App() {
           <AuthRoute exact path="/" type="guest">
             <Home />
           </AuthRoute>
-          <Route path="/users" type="private">
+          <AuthRoute path="/users" type="private">
             <Users />
-          </Route>
-          <Route path="/movies" type="private">
+          </AuthRoute>
+          <AuthRoute path="/movies" type="private">
             <Movies />
-          </Route>
-          <Route path="/subscriptions" type="private">
+          </AuthRoute>
+          <AuthRoute path="/subscriptions" type="private">
             <Subscriptions />
-          </Route>
+          </AuthRoute>
         </Switch>
       </div>
     </React.Fragment>

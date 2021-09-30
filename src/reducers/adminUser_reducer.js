@@ -6,7 +6,6 @@ const initialState = {
   adminUserAccount: '',
   loggedIn: localStorage.getItem('tk') ? true : false,
 };
-
 const adminUserReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SIGN_UP_EMAIL':

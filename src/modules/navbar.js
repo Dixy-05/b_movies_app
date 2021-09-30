@@ -17,6 +17,7 @@ import {
   signUpPassword,
   adminAccount,
   isLoggedIn,
+  clear_timeout,
 } from '../actions/adminUser_actions';
 
 const AppNavbar = () => {
@@ -26,7 +27,9 @@ const AppNavbar = () => {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    adminUsers.loggedIn === false && setShow(true);
+  };
 
   const handleSignUp = () => {
     adminUsersService.createAdminUser();
@@ -37,14 +40,9 @@ const AppNavbar = () => {
     dispatch(isLoggedIn(false));
     localStorage.removeItem('tk');
     dispatch(adminAccount(''));
+    adminUsersService.stopTimeOut();
   };
 
-  const handleMessage = () => {
-    if (adminUsers.loggedIn) {
-      return <span>Log-Out</span>;
-    }
-    return <span>Not LoggedIn</span>;
-  };
   return (
     <React.Fragment>
       <Navbar bg="dark" variant="dark" expand="md">
@@ -57,14 +55,22 @@ const AppNavbar = () => {
         <Container me="auto" className="me-5">
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link onClick={handleShow}>Create-Account</Nav.Link>
+              <Nav.Link onClick={handleShow}>
+                {adminUsers.loggedIn === false ? (
+                  <span>Create-Account</span>
+                ) : null}
+              </Nav.Link>
               <NavDropdown title="Account" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">
                   {adminUsers.adminUserAccount}
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item as={Link} to="/" onClick={handleLogout}>
-                  {handleMessage()}
+                  {adminUsers.loggedIn ? (
+                    <span>Log-Out</span>
+                  ) : (
+                    <span>Not LoggedIn</span>
+                  )}
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>

@@ -7,7 +7,6 @@ import {
 } from '../actions/adminUser_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import adminUsersService from '../services/adminUsersService';
-
 const Home = () => {
   const adminUsers = useSelector((state) => state.adminUsers);
   const dispatch = useDispatch();

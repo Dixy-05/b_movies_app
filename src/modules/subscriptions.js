@@ -6,6 +6,7 @@ import {
   update_Subscription,
   storeSubscription_id,
   reset_update_subscription,
+  store_delete_id,
 } from '../actions/subscriptions_actions';
 import {
   Form,
@@ -15,6 +16,7 @@ import {
   Row,
   Col,
   CloseButton,
+  Alert,
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { useState } from 'react';
@@ -22,6 +24,7 @@ import subscriptionService from '../services/subscriptionService';
 
 const Subscriptions = (props) => {
   const [show, setShow] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const {
     addSubscription,
@@ -29,6 +32,7 @@ const Subscriptions = (props) => {
     subscriptionType,
     updateSubscription,
     subscriptionId,
+    deleteId,
     dispatch,
   } = props;
 
@@ -44,9 +48,7 @@ const Subscriptions = (props) => {
     subscription && setShow(true);
     !subscription && setShow(false);
   };
-  const handleUpdateSubscription = async () => {
-    console.log(updateSubscription);
-    const update = updateSubscription;
+  const handleUpdateSubscription = () => {
     if (subscriptionId === '') {
       alert('No subscription Id was given');
       return;
@@ -55,11 +57,24 @@ const Subscriptions = (props) => {
       alert('One or more of the input fields must have data to update');
       return;
     }
-
-    console.log('addSubscriptoin:', addSubscription);
-    await subscriptionService.updateSubscription();
+    subscriptionService.updateSubscription();
   };
 
+  const handleDeleteButton = () => {
+    if (deleteId === '') {
+      alert('Must provide a subscription id');
+      return;
+    }
+    setShowDelete(true);
+  };
+  const handleRemoveSubscription = () => {
+    subscriptionService.deleteSubscription();
+    setShowDelete(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.which === 13) e.preventDefault();
+  };
   return (
     <React.Fragment>
       <Container>
@@ -143,6 +158,7 @@ const Subscriptions = (props) => {
               type="text"
               placeholder="Enter subscription type"
               onChange={(e) => dispatch(findSubscription(e.target.value))}
+              onKeyPress={(e) => handleKeyPress(e)}
               value={subscriptionType}
             />
           </Form.Group>
@@ -278,6 +294,48 @@ const Subscriptions = (props) => {
           </Button>
         </Form>
       </Container>
+      <hr />
+      <Container className="mb-5">
+        <Form id="DeleteSubscription-Form">
+          <h1>Delete Subscription</h1>
+          <Form.Group className="mb-3">
+            <Form.Label>Subscription Id</Form.Label>
+            <Form.Control
+              autoComplete="off"
+              type="text"
+              placeholder="Enter id"
+              onChange={(e) => dispatch(store_delete_id(e.target.value))}
+              value={deleteId}
+              onKeyPress={(e) => handleKeyPress(e)}
+            />
+            <Form.Text id="warning" className="text-muted"></Form.Text>
+          </Form.Group>
+          <Alert show={showDelete} variant="light">
+            <Alert.Heading>Are you sure you want to delete user?</Alert.Heading>
+            <hr />
+            <div className="d-flex justify-content-center">
+              <Button
+                type="button"
+                onClick={handleRemoveSubscription}
+                variant="outline-danger"
+              >
+                Yes
+              </Button>
+              <Button
+                className="ms-2"
+                onClick={() => setShowDelete(false)}
+                variant="outline-primary"
+              >
+                No
+              </Button>
+            </div>
+          </Alert>
+          <Button type="button" variant="danger" onClick={handleDeleteButton}>
+            Delete
+          </Button>
+        </Form>
+      </Container>
+      <hr />
     </React.Fragment>
   );
 };
@@ -289,6 +347,7 @@ const mapStateToProps = (state) => {
     subscriptionData: state.subscriptions.subscriptionData,
     updateSubscription: state.subscriptions.updateSubscription,
     subscriptionId: state.subscriptions.subscriptionId,
+    deleteId: state.subscriptions.deleteId,
   };
 };
 const mapDispatchToProps = (dispatch) => {

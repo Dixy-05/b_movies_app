@@ -6,9 +6,9 @@ const AuthRoute = (props) => {
   console.log('authRoute:', props);
   const { loggedIn, type } = props;
   if (type === 'guest' && loggedIn) return <Redirect to="/users" />;
-  // else if (type === 'private' && !loggedIn) {
-  //   return <Redirect to="/" />;
-  // }
+  else if (type === 'private' && !loggedIn) {
+    return <Redirect to="/" />;
+  }
 
   return <Route {...props} />;
 };

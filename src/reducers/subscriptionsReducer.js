@@ -4,6 +4,7 @@ const initialState = {
   subscriptionData: {},
   updateSubscription: {},
   subscriptionId: '',
+  deleteId: '',
 };
 
 const subscriptionsReducer = (state = initialState, action) => {
@@ -61,6 +62,13 @@ const subscriptionsReducer = (state = initialState, action) => {
       return {
         ...state,
         updateSubscription: updateReset,
+      };
+
+    case 'STORE_DELETE_ID':
+      let deleteId = action.id;
+      return {
+        ...state,
+        deleteId: deleteId,
       };
 
     default:
