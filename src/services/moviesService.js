@@ -51,7 +51,6 @@ class movieService {
       return movie;
     } catch (error) {
       console.log(error);
-      // store.dispatch(storeMovie({}));
       alert(error);
     }
     store.dispatch(findMovie(''));

@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import AppNavbar from './modules/navbar';
 import AppNavs from './modules/navs';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import Home from './modules/home';
 import Users from './modules/users';
 import Movies from './modules/movies';

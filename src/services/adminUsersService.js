@@ -9,19 +9,13 @@ import {
 import { store } from '../stores/store';
 import jwtDecode from 'jwt-decode';
 const { post } = require('../utils/api');
-const getStore = async () => {
-  const state = await store.getState().adminUsers;
-  return state;
-};
 
 let timeOut;
 const tokenExpiration = async () => {
-  console.log('clearTimeout:', store.getState().adminUsers.clearTimeout);
   let token = await localStorage.getItem('tk');
   const { exp } = await jwtDecode(token);
   const expirationTime = exp * 1000 - Date.now();
   timeOut = setTimeout(() => {
-    console.log('clearTimeout:', store.getState().adminUsers.clearTimeout);
     store.dispatch(isLoggedIn(false));
     store.dispatch(adminAccount(''));
     localStorage.removeItem('tk');
@@ -30,14 +24,14 @@ const tokenExpiration = async () => {
 };
 
 class AdminUserService {
-  async createAdminUser() {
-    const appStore = await getStore();
+  appState = () => store.getState().adminUsers;
+  createAdminUser = async () => {
     try {
       const newUser = await post(
         '/api/register',
         JSON.stringify({
-          email: appStore.signUpEmail,
-          password: appStore.signUpPassword,
+          email: this.appState().signUpEmail,
+          password: this.appState().signUpPassword,
         })
       );
       if (newUser.error) {
@@ -56,27 +50,24 @@ class AdminUserService {
     }
     store.dispatch(signUpEmail(''));
     store.dispatch(signUpPassword(''));
-  }
-  async loginAdminUser() {
-    const appStore = await getStore();
+  };
+  loginAdminUser = async () => {
     try {
       const user = await post(
         '/api/login',
         JSON.stringify({
-          email: appStore.logInEmail,
-          password: appStore.logInPassword,
+          email: this.appState().logInEmail,
+          password: this.appState().logInPassword,
         })
       );
       if (user.error) {
         throw user.error;
       }
-
       localStorage.setItem('tk', user.token);
       if (user.token) {
         store.dispatch(isLoggedIn(true));
         tokenExpiration();
       }
-      console.log('login account:', user.account);
       store.dispatch(adminAccount(user.account));
     } catch (error) {
       console.log(error);
@@ -84,7 +75,7 @@ class AdminUserService {
     }
     store.dispatch(logInEmail(''));
     store.dispatch(logInPassword(''));
-  }
+  };
   stopTimeOut() {
     clearTimeout(timeOut);
   }

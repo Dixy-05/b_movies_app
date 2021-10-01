@@ -16,7 +16,6 @@ class subscriptionService {
   state = () => store.getState();
   async addSubscription() {
     const appSubscriptions = this.state().subscriptions.addSubscription;
-    console.log('addsubscriptoin Type:', appSubscriptions);
     try {
       const subscription = await post(
         '/api/subscriptions/',
@@ -72,7 +71,6 @@ class subscriptionService {
       if (subscription.error) {
         throw subscription.error;
       }
-      console.log('upadate Subscription:', subscription);
       alert('Subscription successfuly updated');
     } catch (error) {
       console.log(error);

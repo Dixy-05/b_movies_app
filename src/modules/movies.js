@@ -28,7 +28,6 @@ const Movies = (props) => {
 
   const handleAddMovie = () => {
     movieService.addNewMovie();
-    console.log('redux State', movies);
   };
   const handleUpdateMovie = () => {
     if (movies.movieId === '') {
@@ -40,7 +39,6 @@ const Movies = (props) => {
       return;
     }
     movieService.updateMovie();
-    console.log('redux State', movies.updateMovie);
   };
   const handleFindMovie = async () => {
     if (movies.findMovieTitle === '') {

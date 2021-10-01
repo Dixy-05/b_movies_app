@@ -17,7 +17,6 @@ import {
   signUpPassword,
   adminAccount,
   isLoggedIn,
-  clear_timeout,
 } from '../actions/adminUser_actions';
 
 const AppNavbar = () => {

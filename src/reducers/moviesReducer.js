@@ -37,11 +37,8 @@ const moviesReducer = (state = initialState, action) => {
       };
 
     case 'STORE_MOVIE_DATA':
-      // const { id, title, genre, movie_length, created_at } = action.data;
       const data = action.data;
       return {
-        // ...state,
-        // movieData: { id, title, genre, movie_length, created_at },
         ...state,
         movieData: data,
       };

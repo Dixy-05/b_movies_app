@@ -5,10 +5,6 @@ import { useSelector } from 'react-redux';
 
 const AppTabs = () => {
   const auth = useSelector((state) => state.adminUsers);
-  // const pathTo = (path) => {
-  //   const linkTo = auth.loggedIn ? `${path}` : '/';
-  //   return linkTo;
-  // };
   const handleAlert = () => {
     if (auth.loggedIn === false) {
       alert('You are not logged In');
@@ -19,19 +15,11 @@ const AppTabs = () => {
   }
   return (
     <React.Fragment>
-      <Nav
-        id="appNavs"
-        variant="tabs"
-        activeKey="/users"
-        // onSelect={(selectedKey) => {
-        //   console.log(selectedKey);
-        // }}
-      >
+      <Nav id="appNavs" variant="tabs" activeKey="/users">
         <Nav.Item>
           <Nav.Link
             onClick={handleAlert}
             as={Link}
-            // to={() => pathTo('/users')}
             to="/users"
             eventKey="users"
             id="unique"
@@ -44,7 +32,6 @@ const AppTabs = () => {
           <Nav.Link
             onClick={handleAlert}
             as={Link}
-            // to={() => pathTo('/movies')}
             to="/movies"
             eventKey="movies"
           >
@@ -54,7 +41,6 @@ const AppTabs = () => {
         <Nav.Item>
           <Nav.Link
             as={Link}
-            // to={() => pathTo('/subscriptions')}
             to="/subscriptions"
             eventKey="subscriptions"
             onClick={handleAlert}

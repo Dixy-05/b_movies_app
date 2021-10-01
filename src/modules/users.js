@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   Button,
@@ -15,10 +15,8 @@ import {
 } from '../actions/users_actions';
 import { useDispatch, useSelector } from 'react-redux';
 import usersService from '../services/usersServices';
-import { tokenExpiration } from '../utils/tokenTimeout';
 
 const Users = (props) => {
-  // useEffect(() => handleToken(), []);
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
@@ -37,8 +35,6 @@ const Users = (props) => {
     }
   };
   const handleFind = async () => {
-    console.log('users state:', users.userInfo);
-    console.log('handle Find:', await users.userInfo.email);
     if (users.findEmail === '') {
       alert('Input field must have an Email');
       return;
@@ -52,18 +48,9 @@ const Users = (props) => {
   const handleKeyPress = (e) => {
     if (e.which === 13) e.preventDefault();
   };
-  // const handleToken = async () => {
-  //   setTimeout(() => {
-  //     localStorage.removeItem('tk');
-  //   }, 5000);
-  // const expiration = await tokenExpiration();
-  // return expiration;
-  // };
 
   return (
     <React.Fragment>
-      {/* <button onClick={handleToken}>test TokenExpiration</button> */}
-
       <Container>
         <Form id="Register-Form">
           <h1>Create User</h1>
@@ -79,7 +66,6 @@ const Users = (props) => {
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -134,7 +120,6 @@ const Users = (props) => {
             <Card.Subtitle className="mb-2 text-muted">
               <b className="ms-3">{users.userInfo.email}</b>
             </Card.Subtitle>
-            {/* <Card.Text> */}
             <ul>
               <li>
                 <b className="me-2">User id:</b>
@@ -145,11 +130,9 @@ const Users = (props) => {
                 {users.userInfo.created_at}
               </li>
             </ul>
-            {/* </Card.Text> */}
           </Card.Body>
         </Card>
       </Container>
-
       <hr />
       <Container className="mb-5">
         <Form id="Delete-Form">

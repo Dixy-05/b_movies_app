@@ -2,10 +2,8 @@ import React from 'react';
 import {
   add_Subscription,
   findSubscription,
-  storeSubscription,
   update_Subscription,
   storeSubscription_id,
-  reset_update_subscription,
   store_delete_id,
 } from '../actions/subscriptions_actions';
 import {
