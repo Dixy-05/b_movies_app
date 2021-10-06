@@ -1,5 +1,5 @@
 import React from 'react';
-import Nav from 'react-bootstrap/nav';
+import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
