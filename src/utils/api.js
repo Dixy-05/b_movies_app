@@ -1,4 +1,5 @@
-const apiUrl = 'http://localhost:8081';
+// const apiUrl = 'http://localhost:8081';
+const apiUrl = 'https://b-movies-sever.herokuapp.com';
 
 export const requestApi = async (url, body, options) => {
   let requestOptions = {};

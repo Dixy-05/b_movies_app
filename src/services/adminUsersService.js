@@ -60,6 +60,7 @@ class AdminUserService {
           password: this.appState().logInPassword,
         })
       );
+      console.log('user from adminUserService:', user);
       if (user.error) {
         throw user.error;
       }
